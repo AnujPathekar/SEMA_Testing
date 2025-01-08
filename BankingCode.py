@@ -26,6 +26,6 @@ class Bank_Account:
 
 Bank = Bank_Account()
 
-Bank.Depositeposit()
+Bank.Deposit()
 Bank.Withdraw()
 Bank.display()

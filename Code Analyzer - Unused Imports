@@ -1,0 +1,41 @@
+import os
+import subprocess
+from radon.complexity import cc_visit
+from radon.visitors import ComplexityVisitor
+from pylint import epylint as lint
+
+def calculate_complexity(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            code = file.read()
+        results = cc_visit(code)
+        for item in results:
+            print(f"{item.name} - Complexity: {item.complexity}")
+    except Exception as e:
+        print(f"Error calculating complexity for {file_path}: {e}")
+
+def find_unused_imports(file_path):
+    try:
+        pylint_stdout, _ = lint.py_run(file_path, return_std=True)
+        output = pylint_stdout.getvalue()
+        for line in output.splitlines():
+            if "unused-import" in line:
+                print(line)
+    except Exception as e:
+        print(f"Error finding unused imports in {file_path}: {e}")
+
+def analyze_project(directory):
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.py'):
+                file_path = os.path.join(root, file)
+                print(f"\nAnalyzing: {file_path}")
+                calculate_complexity(file_path)
+                find_unused_imports(file_path)
+
+if __name__ == "__main__":
+    project_dir = input("Enter the path to your project directory: ")
+    if os.path.isdir(project_dir):
+        analyze_project(project_dir)
+    else:
+        print("Invalid directory path. Please try again.")
